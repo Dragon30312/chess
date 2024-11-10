@@ -37,68 +37,208 @@ class Piece {
         let attackVisionCoordinates = [];
 
         function addTooVisionIfAvailable(cord) {
-            if(typeof cord=="string" && cord[1]!="u"){
-                    if (newestBoardData[cord[0]][cord[1] - 1] == "" || newestBoardData[cord[0]][cord[1] - 1] == "z") {
-                        moveVisionCoordinates.push(cord[0] + cord[1]);
-                    }
-            }
-
+            if (typeof cord == "string" && cord[1] != "u") {
+            if (newestBoardData[cord[0]][cord[1] - 1] == "" || newestBoardData[cord[0]][cord[1] - 1] == "z") {
+                moveVisionCoordinates.push(cord[0] + cord[1]);
+                return true;
+            }}
+            return false
         }
 
         function addTooVisionIfEnemy(cord) {
-            if(typeof cord=="string" && cord[1]!="u"){
-                    if (newestBoardData[cord[0]][cord[1] - 1] != "" && newestBoardData[cord[0]][cord[1] - 1] != "z") {
-                        if (getPiece(cord[0] + [cord[1]]).isBlack == whiteTurn) {
-                            attackVisionCoordinates.push(cord[0] + cord[1]);
-                        }
-                    }
-            }
+            if (typeof cord == "string" && cord[1] != "u") {
+            if (newestBoardData[cord[0]][cord[1] - 1] != "" && newestBoardData[cord[0]][cord[1] - 1] != "z") {
+                if (getPiece(cord[0] + [cord[1]]).isBlack == whiteTurn) {
+                    attackVisionCoordinates.push(cord[0] + cord[1]);
+                    return true;
+                }
+            }}
+            return false
         }
 
-        function addTooVision(cord){
-            addTooVisionIfAvailable(cord);
-            addTooVisionIfEnemy(cord);
+        function addTooVision(cord) {
+            if (typeof cord == "string" && cord[1] != "u") {
+                addTooVisionIfAvailable(cord);
+                addTooVisionIfEnemy(cord);
+                return true;
+            }
+            return false
         }
 
         switch (this.pieceType) {
             case "pawn": {
                 if (this.isBlack) {
-                    addTooVisionIfAvailable(cols[this.col] + rows[this.row - 1])
                     addTooVisionIfEnemy(cols[this.col - 1] + rows[this.row - 1])
                     addTooVisionIfEnemy(cols[this.col + 1] + rows[this.row - 1])
-                    if (this.row == 6) {
+                    if (addTooVisionIfAvailable(cols[this.col] + rows[this.row - 1]) && this.row == 6 ) {
                         addTooVisionIfAvailable(cols[this.col] + rows[this.row - 2])
                     }
                 } else {
-                    addTooVisionIfAvailable(cols[this.col] + rows[this.row + 1])
                     addTooVisionIfEnemy(cols[this.col - 1] + rows[this.row + 1])
                     addTooVisionIfEnemy(cols[this.col + 1] + rows[this.row + 1])
-                    if (this.row == 1) {
+                    if (addTooVisionIfAvailable(cols[this.col] + rows[this.row + 1]) &&  this.row == 1) {
                         addTooVisionIfAvailable(cols[this.col] + rows[this.row + 2])
                     }
                 }
                 break;
             }
-            case "knight":{
-                addTooVision(cols[this.col +2] + rows[this.row+1]);
-                addTooVision(cols[this.col +2] + rows[this.row-1]);
-                addTooVision(cols[this.col -2] + rows[this.row+1]);
-                addTooVision(cols[this.col -2] + rows[this.row-1]);
-                addTooVision(cols[this.col +1] + rows[this.row+2]);
-                addTooVision(cols[this.col +1] + rows[this.row-2]);
-                addTooVision(cols[this.col -1] + rows[this.row+2]);
-                addTooVision(cols[this.col -1] + rows[this.row-2]);
+            case "knight": {
+                addTooVision(cols[this.col + 2] + rows[this.row + 1]);
+                addTooVision(cols[this.col + 2] + rows[this.row - 1]);
+                addTooVision(cols[this.col - 2] + rows[this.row + 1]);
+                addTooVision(cols[this.col - 2] + rows[this.row - 1]);
+                addTooVision(cols[this.col + 1] + rows[this.row + 2]);
+                addTooVision(cols[this.col + 1] + rows[this.row - 2]);
+                addTooVision(cols[this.col - 1] + rows[this.row + 2]);
+                addTooVision(cols[this.col - 1] + rows[this.row - 2]);
                 break;
             }
-            case "king":{
-                addTooVision(cols[this.col +1] + rows[this.row]);
-                addTooVision(cols[this.col +1] + rows[this.row-1]);
-                addTooVision(cols[this.col +1] + rows[this.row+1]);
-                addTooVision(cols[this.col ] + rows[this.row -1]);
-                addTooVision(cols[this.col ] + rows[this.row+1]);
-                addTooVision(cols[this.col -1] + rows[this.row]);
-                addTooVision(cols[this.col -1] + rows[this.row+1]);
-                addTooVision(cols[this.col -1] + rows[this.row-1]);
+            case "king": {
+                addTooVision(cols[this.col + 1] + rows[this.row]);
+                addTooVision(cols[this.col + 1] + rows[this.row - 1]);
+                addTooVision(cols[this.col + 1] + rows[this.row + 1]);
+                addTooVision(cols[this.col] + rows[this.row - 1]);
+                addTooVision(cols[this.col] + rows[this.row + 1]);
+                addTooVision(cols[this.col - 1] + rows[this.row]);
+                addTooVision(cols[this.col - 1] + rows[this.row + 1]);
+                addTooVision(cols[this.col - 1] + rows[this.row - 1]);
+                break;
+            }
+            case "queen":{
+                let i = this.row+1;
+                while(addTooVisionIfEnemy(cols[this.col] + rows[i]) || addTooVisionIfAvailable(cols[this.col] + rows[i])){
+                    if(addTooVisionIfEnemy(cols[this.col] + rows[i])){
+                        break;
+                    }
+                    i++;
+                }
+                i=this.row-1
+                while(addTooVisionIfEnemy(cols[this.col] + rows[i]) || addTooVisionIfAvailable(cols[this.col] + rows[i])){
+                    if(addTooVisionIfEnemy(cols[this.col] + rows[i])){
+                        break;
+                    }
+                    i--;
+                }
+                i=this.col+1
+                while(addTooVisionIfEnemy(cols[i] + rows[this.row]) || addTooVisionIfAvailable(cols[i] + rows[this.row])){
+                    if(addTooVisionIfEnemy(cols[i] + rows[this.row])){
+                        break;
+                    }
+                    i++;
+                }
+                i=this.col-1
+                while(addTooVisionIfEnemy(cols[i] + rows[this.row]) || addTooVisionIfAvailable(cols[i] + rows[this.row])){
+                    if(addTooVisionIfEnemy(cols[i] + rows[this.row])){
+                        break;
+                    }
+                    i--;
+                }
+                i = this.col + 1;
+                let j = this.row + 1
+                while (addTooVisionIfEnemy(cols[i] + rows[j]) || addTooVisionIfAvailable(cols[i] + rows[j])) {
+                    if (addTooVisionIfEnemy(cols[i] + rows[j])) {
+                        break;
+                    }
+                    i++;
+                    j++;
+                }
+                i = this.col - 1;
+                j = this.row + 1
+                while (addTooVisionIfEnemy(cols[i] + rows[j]) || addTooVisionIfAvailable(cols[i] + rows[j])) {
+                    if (addTooVisionIfEnemy(cols[i] + rows[j])) {
+                        break;
+                    }
+                    i--;
+                    j++;
+                }
+                i = this.col + 1;
+                j = this.row - 1
+                while (addTooVisionIfEnemy(cols[i] + rows[j]) || addTooVisionIfAvailable(cols[i] + rows[j])) {
+                    if (addTooVisionIfEnemy(cols[i] + rows[j])) {
+                        break;
+                    }
+                    i++;
+                    j--;
+                }
+                i = this.col - 1;
+                j = this.row - 1
+                while (addTooVisionIfEnemy(cols[i] + rows[j]) || addTooVisionIfAvailable(cols[i] + rows[j])) {
+                    if (addTooVisionIfEnemy(cols[i] + rows[j])) {
+                        break;
+                    }
+                    i--;
+                    j--;
+                }
+                break;
+            }
+            case "rook":{
+                let i = this.row+1;
+                while(addTooVisionIfEnemy(cols[this.col] + rows[i]) || addTooVisionIfAvailable(cols[this.col] + rows[i])){
+                    if(addTooVisionIfEnemy(cols[this.col] + rows[i])){
+                        break;
+                    }
+                    i++;
+                }
+                i=this.row-1
+                while(addTooVisionIfEnemy(cols[this.col] + rows[i]) || addTooVisionIfAvailable(cols[this.col] + rows[i])){
+                    if(addTooVisionIfEnemy(cols[this.col] + rows[i])){
+                        break;
+                    }
+                    i--;
+                }
+                i=this.col+1
+                while(addTooVisionIfEnemy(cols[i] + rows[this.row]) || addTooVisionIfAvailable(cols[i] + rows[this.row])){
+                    if(addTooVisionIfEnemy(cols[i] + rows[this.row])){
+                        break;
+                    }
+                    i++;
+                }
+                i=this.col-1
+                while(addTooVisionIfEnemy(cols[i] + rows[this.row]) || addTooVisionIfAvailable(cols[i] + rows[this.row])){
+                    if(addTooVisionIfEnemy(cols[i] + rows[this.row])){
+                        break;
+                    }
+                    i--;
+                }
+                break;
+            }
+            case "bishop": {
+                let i = this.col + 1;
+                let j = this.row + 1
+                while (addTooVisionIfEnemy(cols[i] + rows[j]) || addTooVisionIfAvailable(cols[i] + rows[j])) {
+                    if (addTooVisionIfEnemy(cols[i] + rows[j])) {
+                        break;
+                    }
+                    i++;
+                    j++;
+                }
+                i = this.col - 1;
+                j = this.row + 1
+                while (addTooVisionIfEnemy(cols[i] + rows[j]) || addTooVisionIfAvailable(cols[i] + rows[j])) {
+                    if (addTooVisionIfEnemy(cols[i] + rows[j])) {
+                        break;
+                    }
+                    i--;
+                    j++;
+                }
+                i = this.col + 1;
+                j = this.row - 1
+                while (addTooVisionIfEnemy(cols[i] + rows[j]) || addTooVisionIfAvailable(cols[i] + rows[j])) {
+                    if (addTooVisionIfEnemy(cols[i] + rows[j])) {
+                        break;
+                    }
+                    i++;
+                    j--;
+                }
+                i = this.col - 1;
+                j = this.row - 1
+                while (addTooVisionIfEnemy(cols[i] + rows[j]) || addTooVisionIfAvailable(cols[i] + rows[j])) {
+                    if (addTooVisionIfEnemy(cols[i] + rows[j])) {
+                        break;
+                    }
+                    i--;
+                    j--;
+                }
                 break;
             }
         }
@@ -157,7 +297,7 @@ function attackTarget(cords) {
     if (id <= 16) {
         players.white[id - 1] = null;
     } else {
-        players.black[id % 16 - 1] = null;
+        players.black[id % 17 ] = null;
     }
     let newCol;
     for (const col in cols) {
